@@ -80,8 +80,13 @@ stars.close()
 #print(S[0])
 
 whataDistances = []
-k = 0
 for i in range(len(Q)):
 	for j in range(len(W)):
 		whataDistances.append(haversine.haversine(Q[i].lat, Q[i].lon, W[j].lat, W[j].lon))
 		print("Query: ", i, " ID: ", W[j], " Distance: ", whataDistances[i+j])
+		
+starDistances = []
+for i in range(len(Q)):
+	for j in range(len(S)):
+		starDistances.append(haversine.haversine(Q[i].lat, Q[i].lon, S[j].lat, S[j].lon))
+		print("Query: ", i, " ID: ", S[j], " Distance: ", starDistances[i+j])
