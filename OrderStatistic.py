@@ -14,7 +14,7 @@ def RandSelect(A, l, r, i):
     elif(i<k):
         return RandSelect(A, l, z-1, i)
     else:
-        return RandSelect(A, z+1, r, i-k)
+        return RandSelect(A, z+1, r, i-k-1)
 
 
 def RandPartition(A, l, r):
@@ -23,16 +23,12 @@ def RandPartition(A, l, r):
     #print("RandPivot: ", randPivot)
     A[l], A[randPivot] = A[randPivot], A[l]
 
-    return Partition(A, l, r)
-
-def Partition(A, l, r):
     x = A[l]
     i = l
-    for j in range(l+1, r): #Must be inclusive, hence q+1
+    for j in range(l+1, r+1): #Must be inclusive, hence r+1
         if(A[j]<=x):
             i+=1
             A[j], A[i] = A[i], A[j]
     
     A[l], A[i] = A[i], A[l]
     return i
-    
