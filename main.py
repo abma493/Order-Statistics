@@ -1,5 +1,6 @@
 import os
-import query
+from Query import Query
+from Store import Store
 import haversine
 
 #Order of operations of program
@@ -13,6 +14,7 @@ import haversine
 print("**Project 2: Whataburger/Starbucks nearest n stores locator**\n")
 
 #Input file path: Queries
+#Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/Queries.csv
 queriesFile = 'Queries.csv'
 #Open input .csv file
 if not os.path.exists(queriesFile):
@@ -27,12 +29,14 @@ line = queries.readline()
 line = queries.readline()
 while line:
 	data = line.split(',')
-	Q.append(query.Query(float(data[0]),float(data[1]),int(data[2])))
+	Q.append(Query(float(data[0]),float(data[1]),int(data[2])))
 	line = queries.readline()
 queries.close()
 
+print(f'length of queries: {len(Q)}')
 
 #Input file path: Whataburger
+#Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/WhataburgerData.csv
 whataFile = 'WhataburgerData.csv'
 #Open input .csv file
 if not os.path.exists(whataFile):
@@ -47,12 +51,15 @@ line = whatas.readline()
 line = whatas.readline()
 while line:
 	data = line.split(',')
-	W.append(query.Store(int(data[0]),str(data[1]),float(data[5]), float(data[6])))
+	W.append(Store(int(data[0]),str(data[1]),float(data[5]), float(data[6])))
 	line = whatas.readline()
 whatas.close()
-#print(W[0])
+
+print(f'length of queries: {len(W)}')
+
 
 #Input file path: Starbucks
+#Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/StarbucksData.csv
 starFile = 'StarbucksData.csv'
 #Open input .csv file
 if not os.path.exists(starFile):
@@ -67,26 +74,26 @@ line = stars.readline()
 line = stars.readline()
 while line:
 	data = line.split(',')
-	if(str(data[1]).find('"')==-1): #Case where Starbucks address has double quotes
-		S.append(query.Store(int(data[0]),str(data[1]),float(data[5]), float(data[6])))
+	if(str(data[1]).find('"') == -1): #Case where Starbucks address has double quotes
+		S.append(Store(int(data[0]),str(data[1]),float(data[5]), float(data[6])))
 	else: #Consider that there may be double quotes within double quotes
 		id = int(data[0]) 
 		subdata1 = line.split('"')
 		Add = str(data[1])
 		subdata2 = subdata1[len(subdata1)-1].split(',')
-		S.append(query.Store(id,Add,float(subdata2[len(subdata2)-2]), float(len(subdata2)-1)))
+		S.append(Store(id,Add,float(subdata2[len(subdata2)-2]), float(len(subdata2)-1)))
 	line = stars.readline()
 stars.close()
-#print(S[0])
 
 whataDistances = []
 for i in range(len(Q)):
 	for j in range(len(W)):
 		whataDistances.append(haversine.haversine(Q[i].lat, Q[i].lon, W[j].lat, W[j].lon))
-		print("Query: ", i, " ID: ", W[j], " Distance: ", whataDistances[i+j])
+		print("Query: ", i, " ", W[j], " Distance: ", whataDistances[i+j])
 		
 starDistances = []
 for i in range(len(Q)):
 	for j in range(len(S)):
 		starDistances.append(haversine.haversine(Q[i].lat, Q[i].lon, S[j].lat, S[j].lon))
-		print("Query: ", i, " ID: ", S[j], " Distance: ", starDistances[i+j])
+		print("Query: ", i, " ", S[j], " Distance: ", starDistances[i+j])
+		
