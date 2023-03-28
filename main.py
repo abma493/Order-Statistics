@@ -1,6 +1,8 @@
 import os
-from Query import Query
+from query import Query
 from Store import Store
+import OrderStatistic
+import orderStat
 import haversine
 
 #Order of operations of program
@@ -33,7 +35,7 @@ while line:
 	line = queries.readline()
 queries.close()
 
-print(f'length of queries: {len(Q)}')
+#print(f'length of queries: {len(Q)}')
 
 #Input file path: Whataburger
 #Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/WhataburgerData.csv
@@ -55,7 +57,7 @@ while line:
 	line = whatas.readline()
 whatas.close()
 
-print(f'length of queries: {len(W)}')
+#print(f'length of queries: {len(W)}')
 
 
 #Input file path: Starbucks
@@ -89,11 +91,17 @@ whataDistances = []
 for i in range(len(Q)):
 	for j in range(len(W)):
 		whataDistances.append(haversine.haversine(Q[i].lat, Q[i].lon, W[j].lat, W[j].lon))
-		print("Query: ", i, " ", W[j], " Distance: ", whataDistances[i+j])
+		#print("Query: ", i, " ", W[j], " Distance: ", whataDistances[j])
+	nDistance = float(OrderStatistic.RandSelect(whataDistances, 0, len(whataDistances)-1, Q[i].numStores-1))
+	print("Lookinf for n-th farthest store:",Q[i].numStores, " Distance:", nDistance)
+	whataDistances.clear()
+	
+    
+    
 		
 starDistances = []
 for i in range(len(Q)):
 	for j in range(len(S)):
 		starDistances.append(haversine.haversine(Q[i].lat, Q[i].lon, S[j].lat, S[j].lon))
-		print("Query: ", i, " ", S[j], " Distance: ", starDistances[i+j])
+		#print("Query: ", i, " ", S[j], " Distance: ", starDistances[i+j])
 		

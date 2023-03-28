@@ -26,7 +26,7 @@ def randPartition(A, l, r):
             r-=1
         swap(A, l, r)
     
-    swap(A[pivot], A[l])
+    swap(A, pivot, l)
 
 
 def swap(A, i1, i2):
