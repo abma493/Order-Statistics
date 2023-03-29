@@ -7,7 +7,6 @@ def RandSelect(A, l, r, i):
         
     z = RandPartition(A, l, r)
     k = z-l
-    #print("z: ", z," i: ", i, " l: ", l, "r: ", r)
 
     if(i==k):
         return(A[z])
@@ -18,9 +17,7 @@ def RandSelect(A, l, r, i):
 
 
 def RandPartition(A, l, r):
-    #print("l: ", l, " r: ", r)
     randPivot = random.randint(l, r)
-    #print("RandPivot: ", randPivot)
     A[l], A[randPivot] = A[randPivot], A[l]
 
     x = A[l]

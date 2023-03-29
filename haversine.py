@@ -14,13 +14,3 @@ def haversine(lat1, long1, lat2, long2):
 	
 	return radiusOfEarthInMiles*c
 	
-	
-lat1 = 29.5827351
-long1 = -98.621094
-
-lat2 = 29.4259671
-long2 = -98.4883306
-
-dist = haversine(lat1,long1,lat2,long2)
-
-print("The distance between UTSA Main campus: ("+str(lat1)+","+str(long1)+") and the Alamo: ("+str(lat2)+","+str(long2)+") is " + str(dist) + " miles.")

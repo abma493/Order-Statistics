@@ -4,6 +4,7 @@ from Store import Store
 import OrderStatistic
 import orderStat
 import haversine
+import math
 
 #Order of operations of program
 #1) Read data from starbucks, whataburger and queries files in order to use for computing distances
@@ -47,17 +48,15 @@ if not os.path.exists(whataFile):
 whatas = open(whataFile,'r')
 
 #Read each line of the WhataburgerData.csv file (Start at 2nd line).
-#Storing the Whataburgers in W array (ID, Address, Latituted, Longitude)
+#Storing the Whataburgers in W array (ID, Address, City, State, Zip Code, Latitude, Longitude, Distance)
 W = []
 line = whatas.readline()
 line = whatas.readline()
 while line:
 	data = line.split(',')
-	W.append(Store(int(data[0]),str(data[1]),float(data[5]), float(data[6])))
+	W.append(Store(int(data[0]),str(data[1]), str(data[2]), str(data[3]), int(data[4]), float(data[5]), float(data[6]), int(-1)))
 	line = whatas.readline()
 whatas.close()
-
-#print(f'length of queries: {len(W)}')
 
 
 #Input file path: Starbucks
@@ -70,38 +69,80 @@ if not os.path.exists(starFile):
 stars = open(starFile,'r')
 
 #Read each line of the StarbucksData.csv file (Start at 2nd line).
-#Storing the stars in S array (ID, Address, Latituted, Longitude)
+#Storing the stars in S array (ID, Address, City, State, Zip Code, Latitude, Longitude, Distance)
 S = []
 line = stars.readline()
 line = stars.readline()
+#i = 0
 while line:
 	data = line.split(',')
-	if(str(data[1]).find('"') == -1): #Case where Starbucks address has double quotes
-		S.append(Store(int(data[0]),str(data[1]),float(data[5]), float(data[6])))
+	if(str(data[1]).find('"') == -1): #Case where Starbucks address does NOT have double quotes
+		S.append(Store(int(data[0]),str(data[1]), str(data[2]), str(data[3]), str(data[4]), float(data[5]), float(data[6]), int(-1)))
 	else: #Consider that there may be double quotes within double quotes
 		id = int(data[0]) 
 		subdata1 = line.split('"')
 		Add = str(data[1])
 		subdata2 = subdata1[len(subdata1)-1].split(',')
-		S.append(Store(id,Add,float(subdata2[len(subdata2)-2]), float(len(subdata2)-1)))
+		S.append(Store(id,Add,str(subdata2[len(subdata2)-5]), str(subdata2[len(subdata2)-4]), str(subdata2[len(subdata2)-3]), float(subdata2[len(subdata2)-2]), float(subdata2[len(subdata2)-1]), int(-1)))
 	line = stars.readline()
+	#i += 1
 stars.close()
 
+#Array of distances to be ordered
+arrayToOrder = []
+#Array of all distances
 whataDistances = []
 for i in range(len(Q)):
 	for j in range(len(W)):
-		whataDistances.append(haversine.haversine(Q[i].lat, Q[i].lon, W[j].lat, W[j].lon))
+		distance = haversine.haversine(Q[i].lat, Q[i].lon, W[j].lat, W[j].lon)
+		whataDistances.append(distance)
+		W[j].distance = distance
 		#print("Query: ", i, " ", W[j], " Distance: ", whataDistances[j])
-	nDistance = float(OrderStatistic.RandSelect(whataDistances, 0, len(whataDistances)-1, Q[i].numStores-1))
-	print("Lookinf for n-th farthest store:",Q[i].numStores, " Distance:", nDistance)
+	#Index of returned element from RandSelect
+	index = whataDistances.index(float(OrderStatistic.RandSelect(whataDistances, 0, len(whataDistances)-1, Q[i].numStores-1)))
+	for k in range(index+1):
+		arrayToOrder.append(whataDistances[k])
+	#Order array of distances
+	arrayToOrder.sort()
+	#Print n closest Whataburgers
+	print("The ", Q[i].numStores, "closest Whataburgers to (", Q[i].lat, ", ", Q[i].lon, "):")
+	for k in range(len(arrayToOrder)):
+		for a in range(len(W)):
+			if(math.isclose(W[a].distance, arrayToOrder[k])):
+				print("Whataburger #", W[a].ID, ". ", W[a].address, ", ", W[a].city, ", ", W[a].state, ", ", W[a].zipCode, ". - ", W[a].distance, " miles.")
+	print()
 	whataDistances.clear()
+	arrayToOrder.clear()
 	
-    
-    
-		
+
+	
+print()
 starDistances = []
 for i in range(len(Q)):
 	for j in range(len(S)):
-		starDistances.append(haversine.haversine(Q[i].lat, Q[i].lon, S[j].lat, S[j].lon))
-		#print("Query: ", i, " ", S[j], " Distance: ", starDistances[i+j])
+		distance = haversine.haversine(Q[i].lat, Q[i].lon, S[j].lat, S[j].lon)
+		starDistances.append(distance)
+		S[j].distance = distance		
+		#print("Query: ", i, " ", S[j], " Distance: ", starDistances[j])
+	#Index of returned element from RandSelect
+	val = float(OrderStatistic.RandSelect(starDistances, 0, len(starDistances)-1, Q[i].numStores-1))
+	index = starDistances.index(val)
+	
+	for k in range(Q[i].numStores):
+		arrayToOrder.append(starDistances[k])
+	
+	#Order array of distances
+	arrayToOrder.sort()
+	#Print n closest Starbucks
+	print("The ", Q[i].numStores, "closest Starbucks to (", Q[i].lat, ", ", Q[i].lon, "):")
+	print("Index: ", index, "distances[index]: ", starDistances[index])
+	for k in range(Q[i].numStores):
+		print(arrayToOrder[k])
+	#for k in range(len(arrayToOrder)):
+		#for a in range(len(S)):
+			#if(math.isclose(S[a].distance, arrayToOrder[k])):
+				#print("Starbucks #", S[a].ID, ". ", S[a].address, ", ", S[a].city, ", ", S[a].state, ", ", S[a].zipCode, ". - ", S[a].distance, " miles.")
+	print()
+	starDistances.clear()
+	arrayToOrder.clear()
 		
