@@ -1,8 +1,7 @@
 import os
-from query import Query
+from Query import Query
 from Store import Store
 import OrderStatistic
-import orderStat
 import haversine
 import math
 
