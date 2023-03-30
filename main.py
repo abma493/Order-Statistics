@@ -1,5 +1,5 @@
 import os
-from Query import Query
+from query import Query
 from Store import Store
 import OrderStatistic
 import haversine
