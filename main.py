@@ -1,5 +1,5 @@
 import os
-from query import Query
+from Query import Query
 from Store import Store
 import OrderStatistic
 import haversine
@@ -17,7 +17,7 @@ print("**Project 2: Whataburger/Starbucks nearest n stores locator**\n")
 
 #Input file path: Queries
 #Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/Queries.csv
-queriesFile = 'Queries.csv'
+queriesFile = 'C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/Queries.csv'
 #Open input .csv file
 if not os.path.exists(queriesFile):
 	print('Cannot find '+ queriesFile + '.')
@@ -39,7 +39,7 @@ queries.close()
 
 #Input file path: Whataburger
 #Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/WhataburgerData.csv
-whataFile = 'WhataburgerData.csv'
+whataFile = 'C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/WhataburgerData.csv'
 #Open input .csv file
 if not os.path.exists(whataFile):
 	print('Cannot find '+ whataFile + '.')
@@ -60,7 +60,7 @@ whatas.close()
 
 #Input file path: Starbucks
 #Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/StarbucksData.csv
-starFile = 'StarbucksData.csv'
+starFile = 'C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/StarbucksData.csv'
 #Open input .csv file
 if not os.path.exists(starFile):
 	print('Cannot find '+ starFile + '.')
