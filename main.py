@@ -2,7 +2,6 @@ import os
 from query import Query
 from Store import Store
 import OrderStatistic
-import orderStat
 import haversine
 import math
 
@@ -88,8 +87,8 @@ while line:
 	#i += 1
 stars.close()
 
-#Array of distances to be ordered
-arrayToOrder = []
+#Array to keep track of stores being printed
+storesSelected = []
 #Array of all distances
 whataDistances = []
 for i in range(len(Q)):
@@ -99,20 +98,20 @@ for i in range(len(Q)):
 		W[j].distance = distance
 		#print("Query: ", i, " ", W[j], " Distance: ", whataDistances[j])
 	#Index of returned element from RandSelect
-	index = whataDistances.index(float(OrderStatistic.RandSelect(whataDistances, 0, len(whataDistances)-1, Q[i].numStores-1)))
-	for k in range(index+1):
-		arrayToOrder.append(whataDistances[k])
+	val = float(OrderStatistic.RandSelect(whataDistances, 0, len(whataDistances)-1, Q[i].numStores-1))
+
 	#Order array of distances
-	arrayToOrder.sort()
+	whataDistances.sort()
 	#Print n closest Whataburgers
 	print("The ", Q[i].numStores, "closest Whataburgers to (", Q[i].lat, ", ", Q[i].lon, "):")
-	for k in range(len(arrayToOrder)):
+	for k in range(Q[i].numStores):
 		for a in range(len(W)):
-			if(math.isclose(W[a].distance, arrayToOrder[k])):
+			if(math.isclose(W[a].distance, whataDistances[k]) and storesSelected.count(S[a].ID)==0):
+				storesSelected.append(S[a].ID)
 				print("Whataburger #", W[a].ID, ". ", W[a].address, ", ", W[a].city, ", ", W[a].state, ", ", W[a].zipCode, ". - ", W[a].distance, " miles.")
 	print()
 	whataDistances.clear()
-	arrayToOrder.clear()
+	storesSelected.clear()
 	
 
 	
@@ -126,23 +125,18 @@ for i in range(len(Q)):
 		#print("Query: ", i, " ", S[j], " Distance: ", starDistances[j])
 	#Index of returned element from RandSelect
 	val = float(OrderStatistic.RandSelect(starDistances, 0, len(starDistances)-1, Q[i].numStores-1))
-	index = starDistances.index(val)
-	
-	for k in range(Q[i].numStores):
-		arrayToOrder.append(starDistances[k])
 	
 	#Order array of distances
-	arrayToOrder.sort()
+	starDistances.sort()
 	#Print n closest Starbucks
 	print("The ", Q[i].numStores, "closest Starbucks to (", Q[i].lat, ", ", Q[i].lon, "):")
-	print("Index: ", index, "distances[index]: ", starDistances[index])
+
 	for k in range(Q[i].numStores):
-		print(arrayToOrder[k])
-	#for k in range(len(arrayToOrder)):
-		#for a in range(len(S)):
-			#if(math.isclose(S[a].distance, arrayToOrder[k])):
-				#print("Starbucks #", S[a].ID, ". ", S[a].address, ", ", S[a].city, ", ", S[a].state, ", ", S[a].zipCode, ". - ", S[a].distance, " miles.")
+		for a in range(len(S)):
+			if(math.isclose(S[a].distance, starDistances[k]) and storesSelected.count(S[a].ID)==0):
+				storesSelected.append(S[a].ID)
+				print("Starbucks #", S[a].ID, ". ", S[a].address, ", ", S[a].city, ", ", S[a].state, ", ", S[a].zipCode, ". - ", S[a].distance, " miles.")
 	print()
 	starDistances.clear()
-	arrayToOrder.clear()
+	storesSelected.clear()
 		
