@@ -21,15 +21,15 @@ def RandPartition(A, l, r):
 
     randPivot = random.randint(l, r)
 
-    A[l], A[randPivot] = A[randPivot], A[l]
+    A[l], A[randPivot] = A[randPivot], A[l] #swap
 
     pivot = A[l] # pivot value
     i = l # left pointer in array
     for j in range(l+1, r+1): #Must be inclusive, hence r+1
         if A[j] <= pivot:
             i+=1
-            A[j], A[i] = A[i], A[j]
+            A[j], A[i] = A[i], A[j] # swap
     
-    A[l], A[i] = A[i], A[l]
+    A[l], A[i] = A[i], A[l] #swap
 
     return i

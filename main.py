@@ -102,11 +102,12 @@ for i in range(len(Q)):
 
 	#Order array of distances
 	whataDistances.sort()
+
 	#Print n closest Whataburgers
 	print("The ", Q[i].numStores, "closest Whataburgers to (", Q[i].lat, ", ", Q[i].lon, "):")
 	for k in range(Q[i].numStores):
 		for a in range(len(W)):
-			if(math.isclose(W[a].distance, whataDistances[k]) and storesSelected.count(S[a].ID)==0):
+			if math.isclose(W[a].distance, whataDistances[k]) and storesSelected.count(S[a].ID) == 0:
 				storesSelected.append(S[a].ID)
 				print("Whataburger #", W[a].ID, ". ", W[a].address, ", ", W[a].city, ", ", W[a].state, ", ", W[a].zipCode, ". - ", W[a].distance, " miles.")
 	print()
@@ -128,12 +129,13 @@ for i in range(len(Q)):
 	
 	#Order array of distances
 	starDistances.sort()
+
 	#Print n closest Starbucks
 	print("The ", Q[i].numStores, "closest Starbucks to (", Q[i].lat, ", ", Q[i].lon, "):")
 
 	for k in range(Q[i].numStores):
 		for a in range(len(S)):
-			if(math.isclose(S[a].distance, starDistances[k]) and storesSelected.count(S[a].ID)==0):
+			if math.isclose(S[a].distance, starDistances[k]) and storesSelected.count(S[a].ID) == 0:
 				storesSelected.append(S[a].ID)
 				print("Starbucks #", S[a].ID, ". ", S[a].address, ", ", S[a].city, ", ", S[a].state, ", ", S[a].zipCode, ". - ", S[a].distance, " miles.")
 	print()
