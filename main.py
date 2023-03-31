@@ -1,10 +1,11 @@
 import os
 import sys
-from Query import Query
+from query import Query
 from Store import Store
 import OrderStatistic
 import haversine
 import math
+import floatMath
 
 #Order of operations of program
 #1) Read data from starbucks, whataburger and queries files in order to use for computing distances
@@ -18,7 +19,7 @@ print("**Project 2: Whataburger/Starbucks nearest n stores locator**\n")
 
 #Input file path: Queries
 #Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/Queries.csv
-queriesFile = 'C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/Queries.csv'
+queriesFile = 'Queries.csv'
 #Open input .csv file
 if not os.path.exists(queriesFile):
 	print('Cannot find '+ queriesFile + '.')
@@ -83,13 +84,13 @@ for i in range(len(Queries)):
 	
 	d.sort()
 
-	#Print n closest Whataburgers
-	print("The ", Queries[i].numStores, "closest Whataburgers to (", Queries[i].lat, ", ", Queries[i].lon, "):")
+	#Print n closest Stores
+	print("The ", Queries[i].numStores, "closest Stores to (", Queries[i].lat, ", ", Queries[i].lon, "):")
 	for k in range(len(d)):
 		for a in range(len(Stores)):
-			if math.isclose(Stores[a].distance, d[k]) and storesSelected.count(Stores[a].ID) == 0:
+			if floatMath.isEqual(Stores[a].distance, d[k]) and storesSelected.count(Stores[a].ID) == 0:
 				storesSelected.append(Stores[a].ID)
-				print("Whataburger #", Stores[a].ID, ". ", 
+				print("Store #", Stores[a].ID, ". ", 
 	  								   Stores[a].address, 
 									   ", ", 
 									   Stores[a].city, 
