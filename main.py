@@ -1,4 +1,5 @@
 import os
+import sys
 from Query import Query
 from Store import Store
 import OrderStatistic
@@ -26,119 +27,81 @@ queries = open(queriesFile,'r')
 
 #Read each line of the Queries.csv file.
 #Storing the queries in Q array (Latitude, Longitude, Number of Stores)
-Q = []
+Queries = []
 line = queries.readline()
 line = queries.readline()
 while line:
 	data = line.split(',')
-	Q.append(Query(float(data[0]),float(data[1]),int(data[2])))
+	Queries.append(Query(float(data[0]),float(data[1]),int(data[2])))
 	line = queries.readline()
 queries.close()
 
-#print(f'length of queries: {len(Q)}')
 
 #Input file path: Whataburger
 #Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/WhataburgerData.csv
-whataFile = 'C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/WhataburgerData.csv'
+dataFileName = sys.argv[1]
 #Open input .csv file
-if not os.path.exists(whataFile):
-	print('Cannot find '+ whataFile + '.')
+if not os.path.exists(dataFileName):
+	print('Cannot find '+ dataFileName + '.')
 	quit()
-whatas = open(whataFile,'r')
+dataFile = open(dataFileName,'r')
 
 #Read each line of the WhataburgerData.csv file (Start at 2nd line).
 #Storing the Whataburgers in W array (ID, Address, City, State, Zip Code, Latitude, Longitude, Distance)
-W = []
-line = whatas.readline()
-line = whatas.readline()
-while line:
-	data = line.split(',')
-	W.append(Store(int(data[0]),str(data[1]), str(data[2]), str(data[3]), int(data[4]), float(data[5]), float(data[6]), int(-1)))
-	line = whatas.readline()
-whatas.close()
-
-
-#Input file path: Starbucks
-#Abraham path: C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/StarbucksData.csv
-starFile = 'C:/Users/abrah/OneDrive/Desktop/VSCode/Python/Project2/StarbucksData.csv'
-#Open input .csv file
-if not os.path.exists(starFile):
-	print('Cannot find '+ starFile + '.')
-	quit()
-stars = open(starFile,'r')
-
-#Read each line of the StarbucksData.csv file (Start at 2nd line).
-#Storing the stars in S array (ID, Address, City, State, Zip Code, Latitude, Longitude, Distance)
-S = []
-line = stars.readline()
-line = stars.readline()
-#i = 0
+Stores = []
+line = dataFile.readline()
+line = dataFile.readline()
 while line:
 	data = line.split(',')
 	if(str(data[1]).find('"') == -1): #Case where Starbucks address does NOT have double quotes
-		S.append(Store(int(data[0]),str(data[1]), str(data[2]), str(data[3]), str(data[4]), float(data[5]), float(data[6]), int(-1)))
+		Stores.append(Store(int(data[0]),str(data[1]), str(data[2]), str(data[3]), str(data[4]), float(data[5]), float(data[6]), int(-1)))
 	else: #Consider that there may be double quotes within double quotes
 		id = int(data[0]) 
 		subdata1 = line.split('"')
 		Add = str(data[1])
 		subdata2 = subdata1[len(subdata1)-1].split(',')
-		S.append(Store(id,Add,str(subdata2[len(subdata2)-5]), str(subdata2[len(subdata2)-4]), str(subdata2[len(subdata2)-3]), float(subdata2[len(subdata2)-2]), float(subdata2[len(subdata2)-1]), int(-1)))
-	line = stars.readline()
-	#i += 1
-stars.close()
+		Stores.append(Store(id,Add,str(subdata2[len(subdata2)-5]), str(subdata2[len(subdata2)-4]), str(subdata2[len(subdata2)-3]), float(subdata2[len(subdata2)-2]), float(subdata2[len(subdata2)-1]), int(-1)))
+	
+	line = dataFile.readline()
+dataFile.close()
 
 #Array to keep track of stores being printed
 storesSelected = []
 #Array of all distances
-whataDistances = []
-for i in range(len(Q)):
-	for j in range(len(W)):
-		distance = haversine.haversine(Q[i].lat, Q[i].lon, W[j].lat, W[j].lon)
-		whataDistances.append(distance)
-		W[j].distance = distance
-		#print("Query: ", i, " ", W[j], " Distance: ", whataDistances[j])
+databaseDistances = []
+for i in range(len(Queries)):
+	for j in range(len(Stores)):
+		distance = haversine.haversine(Queries[i].lat, Queries[i].lon, Stores[j].lat, Stores[j].lon)
+		databaseDistances.append(distance)
+		Stores[j].distance = distance
+		#print("Query: ", i, " ", W[j], " Distance: ", databaseDistances[j])
 	#Index of returned element from RandSelect
-	val = float(OrderStatistic.RandSelect(whataDistances, 0, len(whataDistances)-1, Q[i].numStores-1))
+	val = float(OrderStatistic.RandSelect(databaseDistances, 0, len(databaseDistances)-1, Queries[i].numStores-1))
 
 	#Order array of distances
-	whataDistances.sort()
+	d = databaseDistances[0:Queries[i].numStores]
+	
+	d.sort()
 
 	#Print n closest Whataburgers
-	print("The ", Q[i].numStores, "closest Whataburgers to (", Q[i].lat, ", ", Q[i].lon, "):")
-	for k in range(Q[i].numStores):
-		for a in range(len(W)):
-			if math.isclose(W[a].distance, whataDistances[k]) and storesSelected.count(S[a].ID) == 0:
-				storesSelected.append(S[a].ID)
-				print("Whataburger #", W[a].ID, ". ", W[a].address, ", ", W[a].city, ", ", W[a].state, ", ", W[a].zipCode, ". - ", W[a].distance, " miles.")
+	print("The ", Queries[i].numStores, "closest Whataburgers to (", Queries[i].lat, ", ", Queries[i].lon, "):")
+	for k in range(len(d)):
+		for a in range(len(Stores)):
+			if math.isclose(Stores[a].distance, d[k]) and storesSelected.count(Stores[a].ID) == 0:
+				storesSelected.append(Stores[a].ID)
+				print("Whataburger #", Stores[a].ID, ". ", 
+	  								   Stores[a].address, 
+									   ", ", 
+									   Stores[a].city, 
+									   ", ", 
+									   Stores[a].state,
+									   ", ", 
+									   Stores[a].zipCode, 
+									   ". - ", 
+									   Stores[a].distance, 
+									   " miles.")
 	print()
-	whataDistances.clear()
+	databaseDistances.clear()
 	storesSelected.clear()
 	
-
-	
-print()
-starDistances = []
-for i in range(len(Q)):
-	for j in range(len(S)):
-		distance = haversine.haversine(Q[i].lat, Q[i].lon, S[j].lat, S[j].lon)
-		starDistances.append(distance)
-		S[j].distance = distance		
-		#print("Query: ", i, " ", S[j], " Distance: ", starDistances[j])
-	#Index of returned element from RandSelect
-	val = float(OrderStatistic.RandSelect(starDistances, 0, len(starDistances)-1, Q[i].numStores-1))
-	
-	#Order array of distances
-	starDistances.sort()
-
-	#Print n closest Starbucks
-	print("The ", Q[i].numStores, "closest Starbucks to (", Q[i].lat, ", ", Q[i].lon, "):")
-
-	for k in range(Q[i].numStores):
-		for a in range(len(S)):
-			if math.isclose(S[a].distance, starDistances[k]) and storesSelected.count(S[a].ID) == 0:
-				storesSelected.append(S[a].ID)
-				print("Starbucks #", S[a].ID, ". ", S[a].address, ", ", S[a].city, ", ", S[a].state, ", ", S[a].zipCode, ". - ", S[a].distance, " miles.")
-	print()
-	starDistances.clear()
-	storesSelected.clear()
 		
